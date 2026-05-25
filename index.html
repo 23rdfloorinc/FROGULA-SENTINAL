@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>23rdfloorinc.+FROGULA+LABS+AI PRESENTS: SENTI/VAL</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --neon-cyan: #00e5ff;
+      --neon-pink: #ff3366;
+      --neon-purple: #a855f7;
+      --neon-green: #00ff88;
+      --neon-amber: #ffaa00;
+      --deep-space: #020408;
+      --midnight: #070b14;
+      --void: #030712;
+      --glass-bg: rgba(10, 15, 26, 0.7);
+    }
+    
+    body {
+      background: var(--void);
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      overflow: hidden;
+      height: 100vh;
+      position: relative;
+    }
+    
+    /* Cosmic Background */
+    .cosmic-bg {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 20% 80%, rgba(0, 229, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(255, 51, 102, 0.03) 0%, transparent 70%),
+        linear-gradient(180deg, var(--void) 0%, var(--midnight) 50%, var(--void) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+      background-size: 100px 100px;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--deep-space); }
+    ::-webkit-scrollbar-thumb { background: #1a2744; border-radius: 2px; }
+    
+    /* Enhanced panels with glass morphism */
+    .neuro-panel {
+      background: linear-gradient(135deg, rgba(10,15,26,0.9), rgba(7,11,20,0.85));
+      border: 1px solid rgba(0, 229, 255, 0.15);
+      border-radius: 12px;
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 
+        0 0 40px rgba(0, 229, 255, 0.05),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .neuro-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+      opacity: 0.5;
+    }
+    
+    .neuro-panel::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(45deg, transparent 40%, rgba(0, 229, 255, 0.02) 50%, transparent 60%);
+      pointer-events: none;
+    }
+    
+    /* Orb Container */
+    #orb-container {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    #orb-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    
+    /* Orb UI Overlay */
+    .orb-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+    
+    .orb-stats {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      padding: 8px 20px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .orb-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    
+    .orb-stat-label {
+      font-size: 8px;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .orb-stat-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      color: var(--neon-cyan);
+      font-weight: 700;
+    }
+    
+    /* Domain Buttons */
+    .domain-btn {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(26, 39, 68, 0.8);
+      background: linear-gradient(135deg, rgba(10,15,26,0.8), rgba(7,11,20,0.6));
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .domain-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.1), transparent);
+      transition: left 0.5s;
+    }
+    
+    .domain-btn:hover::before,
+    .domain-btn.active::before {
+      left: 100%;
+    }
+    
+    .domain-btn:hover, .domain-btn.active {
+      border-color: var(--neon-cyan);
+      background: linear-gradient(135deg, rgba(0,229,255,0.1), rgba(0,229,255,0.03));
+      box-shadow: 
+        0 0 20px rgba(0,229,255,0.15),
+        0 0 40px rgba(0,229,255,0.1),
+        inset 0 0 15px rgba(0,229,255,0.05);
+      transform: translateY(-2px);
+    }
+    
+    .domain-btn.active {
+      animation: domainPulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes domainPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(0,229,255,0.15), 0 0 40px rgba(0,229,255,0.1); }
+      50% { box-shadow: 0 0 30px rgba(0,229,255,0.25), 0 0 60px rgba(0,229,255,0.15); }
+    }
+    
+    .domain-icon { color: #4a5568; font-size: 11px; margin-bottom: 2px; transition: color 0.3s; }
+    .domain-btn:hover .domain-icon,
+    .domain-btn.active .domain-icon { color: var(--neon-cyan); text-shadow: 0 0 10px rgba(0,229,255,0.5); }
+    
+    /* Result Cards */
+    .result-card {
+      border: 1px solid rgba(26, 39, 68, 0.8);
+      background: linear-gradient(135deg, rgba(10,15,26,0.6), rgba(7,11,20,0.4));
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .result-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--neon-cyan);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .result-card:hover {
+      border-color: rgba(0, 229, 255, 0.4);
+      background: linear-gradient(135deg, rgba(0,229,255,0.05), rgba(0,229,255,0.02));
+      transform: translateX(4px);
+    }
+    
+    .result-card:hover::before { opacity: 1; }
+    
+    /* Tags */
+    .tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-family: 'Orbitron', sans-serif;
+    }
+    
+    .tag-high { background: rgba(255,51,102,0.15); color: #ff3366; border: 1px solid rgba(255,51,102,0.4); box-shadow: 0 0 10px rgba(255,51,102,0.2); }
+    .tag-medium { background: rgba(255,170,0,0.15); color: #ffaa00; border: 1px solid rgba(255,170,0,0.4); box-shadow: 0 0 10px rgba(255,170,0,0.2); }
+    .tag-low { background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid rgba(0,255,136,0.4); box-shadow: 0 0 10px rgba(0,255,136,0.2); }
+    .tag-info { background: rgba(0,229,255,0.15); color: #00e5ff; border: 1px solid rgba(0,229,255,0.4); box-shadow: 0 0 10px rgba(0,229,255,0.2); }
+    .tag-online { background: rgba(0,255,136,0.1); color: #00ff88; border: 1px solid rgba(0,255,136,0.3); animation: tagPulse 2s ease-in-out infinite; }
+    
+    @keyframes tagPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    
+    /* Signal Feed */
+    .signal-feed-item {
+      border-left: 2px solid rgba(26, 39, 68, 0.8);
+      padding: 8px 12px;
+      font-size: 11px;
+      transition: all 0.3s;
+      position: relative;
+    }
+    
+    .signal-feed-item::before {
+      content: '';
+      position: absolute;
+      left: -2px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--neon-cyan);
+      transform: scaleY(0);
+      transition: transform 0.3s;
+    }
+    
+    .signal-feed-item:hover::before { transform: scaleY(1); }
+    .signal-feed-item:hover { 
+      background: rgba(0,229,255,0.03);
+      border-left-color: transparent;
+    }
+    
+    /* Scan Button */
+    .scan-btn {
+      background: linear-gradient(90deg, #0891b2, #06b6d4, #00e5ff, #06b6d4, #0891b2);
+      background-size: 200% 100%;
+      color: #000;
+      font-weight: 800;
+      font-size: 11px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      letter-spacing: 2px;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .scan-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+    
+    .scan-btn:hover::before { left: 100%; }
+    .scan-btn:hover { 
+      background-position: 100% 0;
+      box-shadow: 0 0 30px rgba(0,229,255,0.4);
+      transform: translateY(-2px);
+    }
+    
+    .scan-btn:active { transform: translateY(1px); }
+    
+    /* Loading Bar */
+    .loading-bar {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-green), var(--neon-purple), var(--neon-cyan), transparent);
+      background-size: 200% 100%;
+      animation: loadingSlide 1.5s ease-in-out infinite, shimmer 2s ease-in-out infinite;
+    }
+    
+    @keyframes loadingSlide {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
+    
+    /* Inputs */
+    .neuro-input {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(26, 39, 68, 0.8);
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.3s;
+      width: 100%;
+    }
+    
+    .neuro-input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0,229,255,0.2), inset 0 0 10px rgba(0,229,255,0.05);
+    }
+    
+    .neuro-input::placeholder { color: #4a5568; }
+    
+    /* Confidence Bar */
+    .confidence-bar-container {
+      width: 100%;
+      height: 6px;
+      background: var(--deep-space);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .confidence-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--neon-pink), var(--neon-amber), var(--neon-green));
+      border-radius: 3px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    
+    .confidence-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s ease-in-out infinite;
+    }
+    
+    /* Header */
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo-pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan), 0 0 30px var(--neon-cyan);
+      animation: logoPulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes logoPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.1); }
+    }
+    
+    .brand-text {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 3px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-cyan));
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: brandGlow 3s ease-in-out infinite;
+    }
+    
+    @keyframes brandGlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    .version-tag {
+      color: #4a5568;
+      font-size: 10px;
+      font-family: 'Orbitron', sans-serif;
+    }
+    
+    /* Particle Count Display */
+    .particle-counter {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+      z-index: 3;
+    }
+    
+    .particle-counter-label {
+      font-size: 8px;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .particle-counter-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px;
+      color: var(--neon-cyan);
+      font-weight: 700;
+    }
+    
+    /* Morph Indicator */
+    .morph-indicator {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+      z-index: 3;
+    }
+    
+    .morph-indicator-label {
+      font-size: 8px;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .morph-indicator-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      color: var(--neon-cyan);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    /* Scan Trigger Animation */
+    .scan-flash {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 229, 255, 0.1);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+      animation: scanFlash 0.5s ease-out;
+    }
+    
+    @keyframes scanFlash {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    
+    /* Data Node Markers on Orb */
+    .node-marker {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+      animation: nodePulse 1s ease-out infinite;
+    }
+    
+    @keyframes nodePulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+    
+    /* Floating Particles */
+    .float-particle {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      opacity: 0.3;
+      pointer-events: none;
+      animation: float 10s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      25% { transform: translateY(-100px) translateX(50px); }
+      50% { transform: translateY(-50px) translateX(-50px); }
+      75% { transform: translateY(-150px) translateX(30px); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Layers -->
+  <div class="cosmic-bg"></div>
+  <div class="grid-overlay"></div>
+  
+  <!-- Floating Particles -->
+  <div id="float-particles"></div>
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid rgba(0,229,255,0.15);background:linear-gradient(180deg, rgba(7,11,20,0.95), rgba(10,15,26,0.8));backdrop-filter:blur(20px);position:relative;z-index:100;height:56px">
+    <div class="header-left">
+      <div class="logo-pulse"></div>
+      <span class="brand-text">SENTI/VAL</span>
+      <span class="version-tag">v2.0</span>
+      <span class="tag tag-online">● LIVE</span>
+    </div>
+    <div style="flex:1;text-align:center">
+      <span style="color:#4a5568;font-size:10px;letter-spacing:3px;text-transform:uppercase">23rdfloorinc.+FROGULA+LABS+AI PRESENTS</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:20px;font-size:11px;color:#4a5568;font-family:'Orbitron',sans-serif">
+      <span id="clock">--:--:--</span>
+      <span>BACKEND: <span class="tag tag-info">NEURAL LINK</span></span>
+    </div>
+  </div>
+
+  <!-- Main Layout -->
+  <div style="display:flex;height:calc(100vh - 56px);position:relative;z-index:10">
+    
+    <!-- Left Panel -->
+    <div style="width:300px;min-width:300px;border-right:1px solid rgba(0,229,255,0.1);background:rgba(10,15,26,0.5);display:flex;flex-direction:column;backdrop-filter:blur(10px)">
+      
+      <!-- Target Section -->
+      <div style="padding:16px;border-bottom:1px solid rgba(0,229,255,0.1)">
+        <label style="font-size:9px;color:#4a5568;text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:8px;font-family:'Orbitron',sans-serif">///TARGET///</label>
+        <input id="target-input" class="neuro-input" type="text" placeholder="domain, IP, @user, wallet...">
+        <button id="scan-btn" class="scan-btn" onclick="executeScan()" style="width:100%;margin-top:12px;padding:14px">INITIATE SCAN</button>
+        <div id="loading-indicator" style="display:none;margin-top:12px;overflow:hidden;border-radius:4px"><div class="loading-bar"></div></div>
+      </div>
+      
+      <!-- OSINT Domains -->
+      <div style="padding:16px;border-bottom:1px solid rgba(0,229,255,0.1)">
+        <label style="font-size:9px;color:#4a5568;text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:12px;font-family:'Orbitron',sans-serif">///OSINT DOM///</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="domain-grid">
+          <button class="domain-btn active neuro-panel" data-domain="identity" onclick="selectDomain(this)" style="border-radius:8px;padding:10px;text-align:left;cursor:pointer">
+            <div class="domain-icon">ID</div>
+            <div style="font-size:9px;color:#4a5568;text-transform:uppercase">Identity</div>
+          </button>
+          <button class="domain-btn neuro-panel" data-domain="infrastructure" onclick="selectDomain(this)" style="border-radius:8px;padding:10px;text-align:left;cursor:pointer">
+            <div class="domain-icon">INFRA</div>
+            <div style="font-size:9px;color:#4a5568;text-transform:uppercase">Infrastructure</div>
+          </button>
+          <button class="domain-btn neuro-panel" data-domain="social" onclick="selectDomain(this)" style="border-radius:8px;padding:10px;text-align:left;cursor:pointer">
+            <div class="domain-icon">SOC</div>
+            <div style="font-size:9px;color:#4a5568;text-transform:uppercase">Social</div>
+          </button>
+          <button class="domain-btn neuro-panel" data-domain="financial" onclick="selectDomain(this)" style="border-radius:8px;padding:10px;text-align:left;cursor:pointer">
+            <div class="domain-icon">FIN</div>
+            <div style="font-size:9px;color:#4a5568;text-transform:uppercase">Financial</div>
+          </button>
+          <button class="domain-btn neuro-panel" data-domain="geospatial" onclick="selectDomain(this)" style="border-radius:8px;padding:10px;text-align:left;cursor:pointer">
+            <div class="domain-icon">GEO</div>
+            <div style="font-size:9px;color:#4a5568;text-transform:uppercase">Geospatial</div>
+          </button>
+          <button class="domain-btn neuro-panel" data-domain="darkweb" onclick="selectDomain(this)" style="border-radius:8px;padding:10px;text-align:left;cursor:pointer">
+            <div class="domain-icon">DRK</div>
+            <div style="font-size:9px;color:#4a5568;text-transform:uppercase">Darkweb</div>
+          </button>
+          <button class="domain-btn neuro-panel" data-domain="corporate" onclick="selectDomain(this)" style="border-radius:8px;padding:10px;text-align:left;cursor:pointer">
+            <div class="domain-icon">CORP</div>
+            <div style="font-size:9px;color:#4a5568;text-transform:uppercase">Corporate</div>
+          </button>
+          <button class="domain-btn neuro-panel" data-domain="media" onclick="selectDomain(this)" style="border-radius:8px;padding:10px;text-align:left;cursor:pointer">
+            <div class="domain-icon">MED</div>
+            <div style="font-size:9px;color:#4a5568;text-transform:uppercase">Media</div>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Scan History -->
+      <div style="flex:1;overflow-y:auto;padding:16px">
+        <label style="font-size:9px;color:#4a5568;text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:12px;font-family:'Orbitron',sans-serif">///SCAN LOG///</label>
+        <div id="scan-history"></div>
+      </div>
+    </div>
+
+    <!-- Center Panel - WebGL Orb -->
+    <div style="flex:1;display:flex;flex-direction:column">
+      <!-- Orb Container -->
+      <div id="orb-container" style="position:relative;height:50%;border-bottom:1px solid rgba(0,229,255,0.1)">
+        <canvas id="orb-canvas"></canvas>
+        
+        <!-- Orb Overlay -->
+        <div class="orb-overlay">
+          <!-- Morph Indicator -->
+          <div class="morph-indicator neuro-panel">
+            <div class="morph-indicator-label">///DATA NODES///</div>
+            <div class="morph-indicator-value" id="morph-value">ASTROLABE</div>
+          </div>
+          
+          <!-- Particle Counter -->
+          <div class="particle-counter neuro-panel">
+            <div class="particle-counter-label">///PARTICLES///</div>
+            <div class="particle-counter-value">100K</div>
+          </div>
+          
+          <!-- Orb Stats -->
+          <div class="orb-stats neuro-panel">
+            <div class="orb-stat">
+              <div class="orb-stat-label">FREQ</div>
+              <div class="orb-stat-value" id="orb-freq">82.4</div>
+            </div>
+            <div class="orb-stat">
+              <div class="orb-stat-label">NODES</div>
+              <div class="orb-stat-value" id="orb-nodes">0</div>
+            </div>
+            <div class="orb-stat">
+              <div class="orb-stat-label">DEPTH</div>
+              <div class="orb-stat-value" id="orb-depth">94%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Panel -->
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid rgba(0,229,255,0.1);background:rgba(10,15,26,0.3)">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:9px;color:#4a5568;text-transform:uppercase;letter-spacing:2px;font-family:'Orbitron',sans-serif">///INTEL RESULTS///</span>
+            <span id="result-count" class="tag tag-info">0</span>
+          </div>
+          <div style="display:flex;gap:12px">
+            <button onclick="exportResults()" style="font-size:10px;color:#00e5ff;background:none;border:none;cursor:pointer;font-family:'Orbitron',sans-serif;text-transform:uppercase;letter-spacing:1px;transition:all 0.3s" onmouseover="this.style.textShadow='0 0 10px #00e5ff'" onmouseout="this.style.textShadow='none'">Export</button>
+            <button onclick="clearResults()" style="font-size:10px;color:#4a5568;background:none;border:none;cursor:pointer;font-family:'Orbitron',sans-serif;text-transform:uppercase;letter-spacing:1px;transition:all 0.3s" onmouseover="this.style.color='#ff3366'" onmouseout="this.style.color='#4a5568'">Clear</button>
+          </div>
+        </div>
+        <div id="results-container" style="flex:1;overflow-y:auto;padding:16px">
+          <div style="text-align:center;color:#4a5568;font-size:11px;padding:40px 0;font-family:'Orbitron',sans-serif">///AWAITING TARGET///</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div style="width:340px;min-width:340px;border-left:1px solid rgba(0,229,255,0.1);background:rgba(10,15,26,0.5);display:flex;flex-direction:column;backdrop-filter:blur(10px)">
+      
+      <!-- Signal Feed -->
+      <div style="flex:1;overflow-y:auto;border-bottom:1px solid rgba(0,229,255,0.1)">
+        <div style="padding:14px 16px;border-bottom:1px solid rgba(0,229,255,0.1);display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.2)">
+          <span style="font-size:9px;color:#4a5568;text-transform:uppercase;letter-spacing:2px;font-family:'Orbitron',sans-serif">///SIGNAL FEED///</span>
+          <span class="pulse" style="width:8px;height:8px;border-radius:50%;background:#00ff88;display:inline-block;box-shadow:0 0 10px #00ff88"></span>
+        </div>
+        <div id="signal-feed" style="padding:8px">
+          <div class="signal-feed-item" style="color:#4a5568;font-family:'Orbitron',sans-serif;font-size:9px">SYSTEM INITIALIZED. NEURAL LINK ESTABLISHED.</div>
+        </div>
+      </div>
+      
+      <!-- Entities -->
+      <div style="height:35%;overflow-y:auto;border-bottom:1px solid rgba(0,229,255,0.1)">
+        <div style="padding:14px 16px;border-bottom:1px solid rgba(0,229,255,0.1);background:rgba(0,0,0,0.2)">
+          <span style="font-size:9px;color:#4a5568;text-transform:uppercase;letter-spacing:2px;font-family:'Orbitron',sans-serif">///DISCOVERED ENTITIES///</span>
+        </div>
+        <div id="entity-panel" style="padding:16px">
+          <div style="color:#4a5568;font-size:11px;font-family:'Orbitron',sans-serif;text-align:center;padding:20px 0">NO ENTITIES DETECTED</div>
+        </div>
+      </div>
+      
+      <!-- Confidence Panel -->
+      <div style="padding:16px;background:rgba(0,0,0,0.2)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:9px;color:#4a5568;text-transform:uppercase;letter-spacing:2px;font-family:'Orbitron',sans-serif">///CONFIDENCE///</span>
+          <span id="confidence-value" style="color:#00e5ff;font-size:16px;font-weight:700;font-family:'Orbitron',sans-serif">--</span>
+        </div>
+        <div class="confidence-bar-container">
+          <div id="confidence-bar" class="confidence-bar" style="width:0%"></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+          <span style="font-size:9px;color:#4a5568;text-transform:uppercase;letter-spacing:2px;font-family:'Orbitron',sans-serif">///RISK///</span>
+          <span id="risk-value" class="tag tag-low">LOW</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // ===========================================
+    // WEBGL PARTICLE ORB - Enhanced for SENTI/VAL
+    // ===========================================
+    
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js';
+    
+    const container = document.getElementById('orb-container');
+    const scene = new THREE.Scene();
+    
+    const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+    
+    function updateCameraZ() {
+      const aspect = container.clientWidth / container.clientHeight;
+      const maxShapeExtent = 38.0;
+      const fovRad = (camera.fov * Math.PI) / 180;
+      let requiredZ = maxShapeExtent / Math.tan(fovRad / 2);
+      if (aspect < 1.0) requiredZ /= aspect;
+      camera.position.z = requiredZ;
+    }
+    updateCameraZ();
+    
+    const renderer = new THREE.WebGLRenderer({ 
+      canvas: document.getElementById('orb-canvas'),
+      antialias: true, 
+      alpha: true 
+    });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    
+    const particleCount = 100000;
+    const geometry = new THREE.BufferGeometry();
+    
+    const positions = new Float32Array(particleCount * 3);
+    const ids = new Float32Array(particleCount);
+    const randoms = new Float32Array(particleCount * 3);
+    
+    for (let i = 0; i < particleCount; i++) {
+      ids[i] = i / particleCount;
+      randoms[i * 3] = Math.random();
+      randoms[i * 3 + 1] = Math.random();
+      randoms[i * 3 + 2] = Math.random();
+    }
+    
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('aId', new THREE.BufferAttribute(ids, 1));
+    geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 3));
+    
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uMorphProgress: { value: 0.0 },
+        uCurrentShape: { value: 0 },
+        uTargetShape: { value: 0 },
+        uMouse: { value: new THREE.Vector2(0, 0) },
+        uScanPulse: { value: 0.0 },
+        uNodeCount: { value: 0 }
+      },
+      vertexShader: `
+        uniform float uTime;
+        uniform float uMorphProgress;
+        uniform int uCurrentShape;
+        uniform int uTargetShape;
+        uniform vec2 uMouse;
+        uniform float uScanPulse;
+        uniform float uNodeCount;
+        
+        attribute float aId;
+        attribute vec3 aRandom;
+        
+        varying vec3 vColor;
+        varying float vAlpha;
+        
+        #define PI 3.14159265359
+        
+        vec3 palette(in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d) {
+          return a + b * cos(6.28318 * (c * t + d));
+        }
+        
+        // Cyberpunk Digital Rain shape - represending data streams
+        vec3 getCyberStream(float id, vec3 rnd) {
+          float row = floor(id * 50.0);
+          float col = fract(id * 50.0);
+          float t = uTime * 2.0 + row * 0.5;
+          
+          vec3 pos = vec3(
+            col * 20.0 - 10.0,
+            fract(t * 0.5 + rnd.y) * 30.0 - 15.0,
+            sin(row * 0.5 + t) * 3.0
+          );
+          
+          float dropEffect = fract(t * 0.5 + rnd.y);
+          float height = sin(dropEffect * PI) * 8.0;
+          
+          return pos * 0.8;
+        }
+        
+        // Astrolabe - cosmic knowledge structure
+        vec3 getAstrolabe(float id, vec3 rnd) {
+          if (rnd.x > 0.3) {
+            float t = id * PI * 2.0;
+            float u = t * 13.0;
+            float v = t * 8.0;
+            
+            float r = 12.0 + 3.0 * cos(v);
+            vec3 pos = vec3(r * cos(u), r * sin(u), 4.0 * sin(v));
+            
+            float noiseAngle = rnd.y * PI * 2.0;
+            float noiseRadius = rnd.z * 1.5;
+            pos += vec3(cos(noiseAngle), sin(noiseAngle), cos(noiseAngle)) * noiseRadius;
+          } else {
+            float ringIdx = floor(rnd.y * 3.0);
+            float angle = id * PI * 2.0 * 1000.0 + uTime * 0.2 * (ringIdx > 1.0 ? -1.0 : 1.0);
+            float r = 24.0 + ringIdx * 4.0 + (rnd.z * 0.5);
+            
+            pos = vec3(r * cos(angle), (rnd.x - 0.15) * 2.0, r * sin(angle));
+            
+            float tilt = 0.5 + ringIdx * 0.8;
+            float rotX = cos(tilt); float rotY = sin(tilt);
+            pos.yz = mat2(rotX, -rotY, rotY, rotX) * pos.yz;
+            pos.xy = mat2(rotX, -rotY, rotY, rotX) * pos.xy;
+          }
+          return pos * 0.85;
+        }
+        
+        // DNA Helix - genetic code / data helix
+        vec3 getDNA(float id, vec3 rnd) {
+          float h = (id - 0.5) * 75.0;
+          float angle = h * 0.5 + uTime * 0.5;
+          float radius = 16.0;
+          
+          float strand = step(0.5, rnd.x);
+          angle += strand * PI;
+          
+          vec3 pos = vec3(cos(angle) * radius, h, sin(angle) * radius);
+          
+          float rungZone = fract(h * 0.5);
+          if (rungZone < 0.15 && rnd.y > 0.4) {
+            float span = (rnd.z * 2.0 - 1.0);
+            pos = vec3(span * cos(angle - strand*PI) * radius, h, span * sin(angle - strand*PI) * radius);
+          } else {
+            pos += (rnd - 0.5) * 1.0;
+          }
+          
+          return pos;
+        }
+        
+        // Heartbeat - the core pulse
+        vec3 getHeart(float id, vec3 rnd) {
+          float u = rnd.x * PI * 2.0;
+          float v = acos(2.0 * rnd.y - 1.0);
+          
+          float x = 16.0 * pow(sin(u), 3.0);
+          float y = 13.0 * cos(u) - 5.0 * cos(2.0 * u) - 2.0 * cos(3.0 * u) - cos(4.0 * u) + 3.0;
+          float z = 5.0 * cos(v);
+          
+          vec3 pos = vec3(x, y, z);
+          
+          float layer = floor(rnd.z * 3.0);
+          float scale = 1.0 - (layer * 0.35);
+          
+          float beat = 1.0 + pow(sin(uTime * 3.0 - layer * 0.8), 8.0) * 0.12;
+          
+          // React to scan pulse
+          beat += uScanPulse * 0.3 * sin(id * 50.0 + uTime * 10.0);
+          
+          return pos * scale * beat * 1.3;
+        }
+        
+        // Neural Network - data nodes
+        vec3 getNeural(float id, vec3 rnd) {
+          float nodeIdx = floor(id * 20.0);
+          float nodeParticle = fract(id * 20.0);
+          
+          vec3 nodePos = vec3(
+            sin(nodeIdx * 1.618) * 10.0,
+            cos(nodeIdx * 2.618) * 10.0,
+            sin(nodeIdx * 4.236) * 10.0
+          );
+          
+          float connection = step(0.7, fract(nodeParticle * 1.618));
+          
+          vec3 pos = mix(
+            nodePos,
+            nodePos + vec3(
+              (rnd.x - 0.5) * 15.0,
+              (rnd.y - 0.5) * 15.0,
+              (rnd.z - 0.5) * 15.0
+            ),
+            connection
+          );
+          
+          // React to node count
+          pos += nodePos * uNodeCount * 0.1;
+          
+          return pos * 0.9;
+        }
+        
+        vec3 getShapePosition(int shape, float id, vec3 rnd) {
+          if (shape == 0) return getAstrolabe(id, rnd);
+          if (shape == 1) return getDNA(id, rnd);
+          if (shape == 2) return getHeart(id, rnd);
+          if (shape == 3) return getNeural(id, rnd);
+          if (shape == 4) return getCyberStream(id, rnd);
+          return vec3(0.0);
+        }
+        
+        vec3 getShapeColor(int shape, float id, vec3 rnd) {
+          // Cyberpunk cyan palette
+          if (shape == 0) {
+            return palette(id + uTime * 0.05, 
+              vec3(0.0, 0.3, 0.5), 
+              vec3(0.0, 0.5, 0.7), 
+              vec3(0.0, 1.0, 1.0), 
+              vec3(0.0, 0.33, 0.67)
+            );
+          }
+          if (shape == 1) {
+            float h = (id - 0.5) * 60.0;
+            float rungZone = fract(h * 0.5);
+            if (rungZone < 0.15 && rnd.y > 0.4) return vec3(0.0, 1.0, 0.5);
+            return palette(id * 0.1, 
+              vec3(0.0, 0.4, 0.6), 
+              vec3(0.1, 0.5, 0.6), 
+              vec3(0.0, 1.0, 1.0), 
+              vec3(0.0, 0.2, 0.4)
+            );
+          }
+          if (shape == 2) {
+            float layer = floor(rnd.z * 3.0);
+            if (layer == 2.0) return vec3(1.0, 0.0, 0.5);
+            return palette(id, 
+              vec3(0.8, 0.0, 0.3), 
+              vec3(0.3, 0.0, 0.1), 
+              vec3(1.0, 0.0, 0.5), 
+              vec3(0.0, 0.0, 0.0)
+            );
+          }
+          if (shape == 3) {
+            // Neural network colors
+            return palette(id + uTime * 0.1,
+              vec3(0.1, 0.0, 0.5),
+              vec3(0.3, 0.0, 0.7),
+              vec3(0.8, 0.0, 1.0),
+              vec3(0.0, 0.2, 0.4)
+            );
+          }
+          if (shape == 4) {
+            // Cyber stream matrix-like
+            float intensity = fract(id * 10.0 + uTime);
+            return mix(
+              vec3(0.0, 0.3, 0.0),
+              vec3(0.0, 1.0, 0.5),
+              intensity
+            );
+          }
+          return vec3(1.0);
+        }
+        
+        float cubicInOut(float t) {
+          return t < 0.5 ? 4.0 * t * t * t : 1.0 - pow(-2.0 * t + 2.0, 3.0) / 2.0;
+        }
+        
+        void main() {
+          vec3 p1 = getShapePosition(uCurrentShape, aId, aRandom);
+          vec3 p2 = getShapePosition(uTargetShape, aId, aRandom);
+          
+          vec3 c1 = getShapeColor(uCurrentShape, aId, aRandom);
+          vec3 c2 = getShapeColor(uTargetShape, aId, aRandom);
+          
+          float easedMorph = cubicInOut(uMorphProgress);
+          
+          vec3 finalPos = mix(p1, p2, easedMorph);
+          
+          float breatheMask = sin(uMorphProgress * PI);
+          finalPos += normalize(finalPos) * breatheMask * 8.0;
+          
+          // React to scan pulse
+          finalPos += normalize(finalPos) * uScanPulse * 2.0 * sin(aId * 20.0 + uTime * 5.0);
+          
+          float autoRot1 = (uCurrentShape == 2) ? 0.0 : uTime * 0.1;
+          float autoRot2 = (uTargetShape == 2) ? 0.0 : uTime * 0.1;
+          float rotY = mix(autoRot1, autoRot2, easedMorph) + uMouse.x * 0.5;
+          float rotX = uMouse.y * 0.5;
+          
+          mat3 rotMatY = mat3(
+            cos(rotY), 0.0, sin(rotY),
+            0.0, 1.0, 0.0,
+            -sin(rotY), 0.0, cos(rotY)
+          );
+          
+          mat3 rotMatX = mat3(
+            1.0, 0.0, 0.0,
+            0.0, cos(rotX), -sin(rotX),
+            0.0, sin(rotX), cos(rotX)
+          );
+          
+          finalPos = rotMatY * rotMatX * finalPos;
+          
+          vColor = mix(c1, c2, easedMorph);
+          
+          // Enhanced alpha with scan pulses
+          float pulseAlpha = sin(uTime * 5.0 + aId * PI * 20.0);
+          vAlpha = 0.3 + 0.7 * pulseAlpha + uScanPulse * 0.3;
+          
+          vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
+          gl_Position = projectionMatrix * mvPosition;
+          
+          float sizeMultiplier = 1.0 + uScanPulse * 0.5;
+          gl_PointSize = (2.0 + aRandom.x * 2.5) * sizeMultiplier * (40.0 / -mvPosition.z);
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vColor;
+        varying float vAlpha;
+        
+        void main() {
+          vec2 uv = gl_PointCoord.xy - vec2(0.5);
+          float dist = length(uv);
+          
+          if (dist > 0.5) discard;
+          
+          float alpha = smoothstep(0.5, 0.1, dist);
+          
+          gl_FragColor = vec4(vColor, alpha * vAlpha);
+        }
+      `,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    
+    const particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+    
+    let morphProgress = 0;
+    let currentShape = 0;
+    let targetShape = 0;
+    let isTransitioning = false;
+    const TOTAL_SHAPES = 5;
+    
+    const shapeNames = ['ASTROLABE', 'DNA HELIX', 'CORE PULSE', 'NEURAL NET', 'DATA STREAM'];
+    
+    const mouse = new THREE.Vector2(0, 0);
+    const targetMouse = new THREE.Vector2(0, 0);
+    
+    container.addEventListener('mousemove', (e) => {
+      const rect = container.getBoundingClientRect();
+      targetMouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      targetMouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    });
+    
+    // Auto-morph through shapes
+    function autoMorph() {
+      if (!isTransitioning) {
+        targetShape = (targetShape + 1) % TOTAL_SHAPES;
+        isTransitioning = true;
+        morphProgress = 0;
+        updateMorphIndicator();
+      }
+    }
+    
+    function updateMorphIndicator() {
+      document.getElementById('morph-value').textContent = shapeNames[targetShape];
+    }
+    
+    // Trigger morph on scan
+    window.triggerOrbMorph = function(nodeCount = 1) {
+      targetShape = Math.floor(Math.random() * TOTAL_SHAPES);
+      isTransitioning = true;
+      morphProgress = 0;
+      updateMorphIndicator();
+      
+      // Trigger scan pulse
+      material.uniforms.uScanPulse.value = 1.0;
+      setTimeout(() => { material.uniforms.uScanPulse.value = 0.0; }, 500);
+      
+      // Update node count
+      material.uniforms.uNodeCount.value = Math.min(nodeCount / 10, 1.0);
+      document.getElementById('orb-nodes').textContent = nodeCount;
+    };
+    
+    // Auto morph every 8 seconds
+    setInterval(autoMorph, 8000);
+    
+    window.addEventListener('resize', () => {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      updateCameraZ();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+    
+    const clock = new THREE.Clock();
+    
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+      const elapsedTime = clock.getElapsedTime();
+      
+      mouse.x += (targetMouse.x - mouse.x) * delta * 2.0;
+      mouse.y += (targetMouse.y - mouse.y) * delta * 2.0;
+      
+      if (isTransitioning) {
+        morphProgress += delta * 0.8;
+        
+        if (morphProgress >= 1) {
+          morphProgress = 0;
+          currentShape = targetShape;
+          isTransitioning = false;
+        }
+      }
+      
+      material.uniforms.uTime.value = elapsedTime;
+      material.uniforms.uMorphProgress.value = morphProgress;
+      material.uniforms.uCurrentShape.value = currentShape;
+      material.uniforms.uTargetShape.value = targetShape;
+      material.uniforms.uMouse.value.copy(mouse);
+      
+      // Decay scan pulse
+      material.uniforms.uScanPulse.value *= 0.95;
+      
+      renderer.render(scene, camera);
+    }
+    
+    animate();
+    
+    // ===========================================
+    // SENTI/VAL Application Logic
+    // ===========================================
+    
+    window.state = {
+      activeDomain: 'identity',
+      target: '',
+      results: [],
+      entities: [],
+      signals: [],
+      scanHistory: [],
+      scanActive: false,
+      scanCount: 0
+    };
+    
+    // Clock
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = 
+        now.toTimeString().substring(0, 8) + ' UTC';
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+    
+    // Domain Selection
+    window.selectDomain = function(btn) {
+      document.querySelectorAll('.domain-btn').forEach(x => x.classList.remove('active'));
+      btn.classList.add('active');
+      state.activeDomain = btn.dataset.domain;
+      addSignal('DOMAIN', 'Switched to ' + state.activeDomain.toUpperCase(), 'info');
+    };
+    
+    // Signal Feed
+    window.addSignal = function(t, m, l) {
+      const f = document.getElementById('signal-feed');
+      const c = {
+        info: 'color:#00e5ff',
+        warn: 'color:#ffaa00',
+        error: 'color:#ff3366',
+        success: 'color:#00ff88',
+        purple: 'color:#a855f7'
+      };
+      const time = new Date().toTimeString().substring(0, 8);
+      const d = document.createElement('div');
+      d.className = 'signal-feed-item';
+      d.style.animation = 'fadeIn 0.3s ease-out';
+      d.innerHTML = `<span style="color:#4a5568">${time}</span> <span style="${c[l]};font-weight:bold">[${t}]</span> <span style="color:#cbd5e0">${m}</span>`;
+      f.insertBefore(d, f.firstChild);
+      if (f.children.length > 100) f.removeChild(f.lastChild);
+    };
+    
+    // Entities
+    window.addEntity = function(n, t, c) {
+      if (state.entities.find(e => e.name === n && e.type === t)) return;
+      state.entities.push({ name: n, type: t, confidence: c });
+      renderEntities();
+    };
+    
+    window.renderEntities = function() {
+      const p = document.getElementById('entity-panel');
+      if (!state.entities.length) {
+        p.innerHTML = '<div style="color:#4a5568;font-size:11px;font-family:Orbitron,sans-serif;text-align:center;padding:20px 0">NO ENTITIES DETECTED</div>';
+        return;
+      }
+      p.innerHTML = state.entities.map(e => {
+        const cls = e.confidence > 80 ? 'tag-low' : e.confidence > 50 ? 'tag-medium' : 'tag-high';
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(26,39,68,0.3)"><div><span style="font-size:12px;color:#cbd5e0">${e.name}</span><br><span style="font-size:10px;color:#4a5568">${e.type}</span></div><span class="tag ${cls}">${e.confidence}%</span></div>`;
+      }).join('');
+    };
+    
+    // Confidence & Risk
+    window.setConfidence = function(v) {
+      document.getElementById('confidence-value').textContent = v + '%';
+      document.getElementById('confidence-bar').style.width = v + '%';
+      let r = 'LOW', c = 'tag-low';
+      if (v < 40) { r = 'CRITICAL'; c = 'tag-high'; }
+      else if (v < 60) { r = 'HIGH'; c = 'tag-high'; }
+      else if (v < 80) { r = 'MEDIUM'; c = 'tag-medium'; }
+      document.getElementById('risk-value').textContent = r;
+      document.getElementById('risk-value').className = 'tag ' + c;
+    };
+    
+    // Results
+    window.addResult = function(r) {
+      state.results.push(r);
+      document.getElementById('result-count').textContent = state.results.length;
+      renderResults();
+    };
+    
+    window.renderResults = function() {
+      const c = document.getElementById('results-container');
+      if (!state.results.length) {
+        c.innerHTML = '<div style="text-align:center;color:#4a5568;font-size:11px;padding:40px 0;font-family:Orbitron,sans-serif">///AWAITING TARGET///</div>';
+        return;
+      }
+      c.innerHTML = state.results.map(r => {
+        const tc = r.severity === 'high' ? 'tag-high' : r.severity === 'medium' ? 'tag-medium' : r.severity === 'low' ? 'tag-low' : 'tag-info';
+        let fh = '';
+        if (r.fields) {
+          fh = '<div style="margin-top:10px">';
+          Object.keys(r.fields).forEach(k => {
+            fh += `<div style="display:flex"><span style="font-size:9px;color:#4a5568;width:120px;flex-shrink:0;text-transform:uppercase">${k}</span><span style="font-size:10px;color:#cbd5e0;word-break:break-all">${r.fields[k]}</span></div>`;
+          });
+          fh += '</div>';
+        }
+        return `<div class="result-card neuro-panel" style="border-radius:8px;padding:14px;margin-bottom:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:12px;font-weight:bold;color:#e2e8f0">${r.title}</span>
+            <span class="tag ${tc}">${(r.severity || 'info').toUpperCase()}</span>
+          </div>
+          <div style="font-size:11px;color:#4a5568">${r.description || ''}</div>
+          ${fh}
+          <div style="margin-top:10px;font-size:9px;color:#2d3748">${r.source || ''} | ${new Date().toTimeString().substring(0,8)}</div>
+        </div>`;
+      }).join('');
+      c.scrollTop = c.scrollHeight;
+    };
+    
+    window.clearResults = function() {
+      state.results = [];
+      state.entities = [];
+      renderResults();
+      renderEntities();
+      setConfidence(0);
+      document.getElementById('result-count').textContent = '0';
+      addSignal('SYS', 'Results cleared', 'warn');
+    };
+    
+    window.exportResults = function() {
+      const d = JSON.stringify({
+        target: state.target,
+        domain: state.activeDomain,
+        results: state.results,
+        entities: state.entities,
+        timestamp: new Date().toISOString()
+      }, null, 2);
+      const b = new Blob([d], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(b);
+      a.download = 'sentival-' + (state.target || 'export').replace(/[^a-z0-9]/gi, '-') + '-' + Date.now() + '.json';
+      a.click();
+      addSignal('EXPORT', 'Results exported', 'success');
+    };
+    
+    // API
+    const API = {
+      ipGeo: t => fetch('http://ip-api.com/json/' + encodeURIComponent(t) + '?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query').then(r => r.json()),
+      dnsLookup: d => fetch('https://dns.google/resolve?name=' + encodeURIComponent(d) + '&type=A').then(r => r.json()),
+      dnsMX: d => fetch('https://dns.google/resolve?name=' + encodeURIComponent(d) + '&type=MX').then(r => r.json()),
+      whois: d => fetch('https://rdap.org/domain/' + encodeURIComponent(d)).then(r => r.ok ? r.json() : null),
+      crtsh: d => fetch('https://crt.sh/?q=%25.' + encodeURIComponent(d) + '&output=json').then(r => r.ok ? r.json() : []),
+      githubUser: u => fetch('https://api.github.com/users/' + encodeURIComponent(u)).then(r => r.ok ? r.json() : null),
+      nominatim: q => fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&limit=5', { headers: { 'User-Agent': 'SENTIVAL/2.0' } }).then(r => r.json()),
+      btcAddress: a => fetch('https://blockchain.info/rawaddr/' + encodeURIComponent(a) + '?limit=5').then(r => r.ok ? r.json() : null),
+      ethAddress: a => fetch('https://api.blockcypher.com/v1/eth/main/addrs/' + encodeURIComponent(a) + '/balance').then(r => r.ok ? r.json() : null)
+    };
+    
+    // Scan Execution
+    window.executeScan = function() {
+      const target = document.getElementById('target-input').value.trim();
+      if (!target) {
+        addSignal('SYS', 'No target specified', 'warn');
+        return;
+      }
+      if (state.scanActive) return;
+      
+      state.target = target;
+      state.scanActive = true;
+      state.scanCount++;
+      
+      document.getElementById('loading-indicator').style.display = 'block';
+      document.getElementById('scan-btn').textContent = 'SCANNING...';
+      addSignal('SCAN', 'Initiating ' + state.activeDomain.toUpperCase() + ' scan: ' + target, 'purple');
+      
+      // Trigger orb reaction
+      if (window.triggerOrbMorph) {
+        window.triggerOrbMorph(state.scanCount);
+      }
+      
+      let p;
+      switch (state.activeDomain) {
+        case 'identity': p = scanIdentity(target); break;
+        case 'infrastructure': p = scanInfrastructure(target); break;
+        case 'social': p = scanSocial(target); break;
+        case 'financial': p = scanFinancial(target); break;
+        case 'geospatial': p = scanGeospatial(target); break;
+        default: p = scanIdentity(target);
+      }
+      
+      p.then(() => {
+        state.scanActive = false;
+        document.getElementById('loading-indicator').style.display = 'none';
+        document.getElementById('scan-btn').textContent = 'INITIATE SCAN';
+        addSignal('SCAN', 'Complete. ' + state.results.length + ' findings.', 'success');
+        
+        // Update orb frequency
+        document.getElementById('orb-freq').textContent = (82 + Math.random() * 15).toFixed(1);
+      }).catch(e => {
+        state.scanActive = false;
+        document.getElementById('loading-indicator').style.display = 'none';
+        document.getElementById('scan-btn').textContent = 'INITIATE SCAN';
+        addSignal('ERROR', e.message, 'error');
+      });
+    };
+    
+    // Scan Functions
+    function scanIdentity(t) {
+      const isEmail = t.indexOf('@') > -1;
+      const isIP = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(t);
+      
+      if (isIP) {
+        return API.ipGeo(t).then(g => {
+          if (g.status === 'success') {
+            addResult({
+              title: 'IP Geolocation',
+              description: g.city + ', ' + g.country,
+              severity: 'info',
+              source: 'identity-entityfusion',
+              fields: { IP: g.query, City: g.city, Region: g.regionName, Country: g.country, ISP: g.isp, Org: g.org, AS: g.as, Coords: g.lat + ', ' + g.lon }
+            });
+            addEntity(g.query, 'IP_ADDRESS', 95);
+            addEntity(g.isp, 'ISP', 80);
+            setConfidence(85);
+          }
+        });
+      }
+      
+      if (isEmail) {
+        const domain = t.split('@')[1];
+        addResult({ title: 'Email Analysis', description: 'Domain: ' + domain, severity: 'info', source: 'identity-emailintel', fields: { Email: t, Domain: domain } });
+        addEntity(t, 'EMAIL', 95);
+        addEntity(domain, 'DOMAIN', 80);
+        setConfidence(75);
+        return Promise.resolve();
+      }
+      
+      addEntity(t, 'USERNAME', 90);
+      return API.githubUser(t).then(g => {
+        if (g) {
+          addResult({ title: 'GitHub: ' + g.login, description: g.bio || 'No bio', severity: 'medium', source: 'identity-usernamehunt', fields: { Name: g.name || 'N/A', Location: g.location || 'N/A', Company: g.company || 'N/A', Repos: String(g.public_repos), Followers: String(g.followers), URL: g.html_url } });
+          addEntity(g.login, 'GITHUB', 95);
+          if (g.name) addEntity(g.name, 'REAL_NAME', 60);
+          setConfidence(70);
+        } else {
+          addResult({ title: 'Username: ' + t, description: 'GitHub profile not found', severity: 'low', source: 'identity-usernamehunt' });
+          setConfidence(40);
+        }
+      }).catch(() => setConfidence(30));
+    }
+    
+    function scanInfrastructure(t) {
+      const isDomain = /^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,}$/i.test(t);
+      if (!isDomain) return scanIdentity(t);
+      
+      addEntity(t, 'DOMAIN', 95);
+      return Promise.all([
+        API.dnsLookup(t).catch(() => null),
+        API.dnsMX(t).catch(() => null),
+        API.whois(t).catch(() => null),
+        API.crtsh(t).catch(() => [])
+      ]).then(r => {
+        const dns = r[0], mx = r[1], whois = r[2], certs = r[3];
+        if (dns && dns.Answer) {
+          const ips = dns.Answer.filter(a => a.type === 1).map(a => a.data);
+          addResult({ title: 'DNS A Records', description: ips.length + ' IP(s)', severity: 'info', source: 'infrastructure-dnsgraph', fields: { IPs: ips.join(', ') } });
+          ips.forEach(ip => addEntity(ip, 'IP_ADDRESS', 90));
+        }
+        if (mx && mx.Answer) {
+          addResult({ title: 'MX Records', description: mx.Answer.length + ' mail server(s)', severity: 'low', source: 'infrastructure-dnsgraph', fields: { MX: mx.Answer.map(a => a.data).join(', ') } });
+        }
+        if (whois) {
+          addResult({ title: 'RDAP/WHOIS', description: 'Domain registration data', severity: 'info', source: 'infrastructure-hyperdomain', fields: { Status: (whois.status || []).join(', ') } });
+        }
+        if (Array.isArray(certs) && certs.length > 0) {
+          const subs = [].concat.apply([], certs.map(c => c.name_value.split('\n'))).filter((s, i, a) => a.indexOf(s) === i && s.indexOf(t) > -1).slice(0, 20);
+          addResult({ title: 'Subdomains (CT)', description: subs.length + ' found', severity: 'medium', source: 'infrastructure-subdomainminer', fields: { Subdomains: subs.join(', '), Certs: String(certs.length) } });
+        }
+        setConfidence(82);
+      });
+    }
+    
+    function scanSocial(t) {
+      const u = t.replace(/^@/, '');
+      addEntity(u, 'USERNAME', 95);
+      return API.githubUser(u).then(g => {
+        if (g) {
+          addResult({ title: 'GitHub: ' + g.login, description: g.bio || '', severity: 'info', source: 'social-networkgraph', fields: { Name: g.name || 'N/A', Company: g.company || 'N/A', Location: g.location || 'N/A', Repos: String(g.public_repos), Followers: String(g.followers), URL: g.html_url } });
+          addEntity(g.login, 'GITHUB', 95);
+        }
+        const platforms = ['x.com/' + u, 'instagram.com/' + u, 'tiktok.com/@' + u, 'linkedin.com/in/' + u, 'youtube.com/@' + u];
+        addResult({ title: 'Platform URLs', description: platforms.length + ' links generated', severity: 'low', source: 'social-socialdna', fields: { URLs: platforms.join(', ') } });
+        setConfidence(60);
+      }).catch(() => setConfidence(30));
+    }
+    
+    function scanFinancial(t) {
+      const isBTC = /^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,62}$/.test(t);
+      const isETH = /^0x[a-fA-F0-9]{40}$/.test(t);
+      
+      if (isBTC) {
+        addEntity(t, 'BTC_WALLET', 95);
+        return API.btcAddress(t).then(d => {
+          if (d) {
+            addResult({ title: 'BTC Wallet', description: (d.final_balance / 1e8).toFixed(8) + ' BTC', severity: 'medium', source: 'financial-wallettrace', fields: { Address: t, Balance: (d.final_balance / 1e8).toFixed(8) + ' BTC', Received: (d.total_received / 1e8).toFixed(8) + ' BTC', Sent: (d.total_sent / 1e8).toFixed(8) + ' BTC', Txs: String(d.n_tx) } });
+            setConfidence(85);
+          }
+        }).catch(() => {});
+      }
+      
+      if (isETH) {
+        addEntity(t, 'ETH_WALLET', 95);
+        return API.ethAddress(t).then(d => {
+          if (d) {
+            addResult({ title: 'ETH Wallet', description: (d.balance / 1e18).toFixed(6) + ' ETH', severity: 'medium', source: 'financial-wallettrace', fields: { Address: t, Balance: (d.balance / 1e18).toFixed(6) + ' ETH' } });
+            setConfidence(80);
+          }
+        }).catch(() => {});
+      }
+      
+      addResult({ title: 'Financial', description: 'Provide BTC or ETH address', severity: 'info', source: 'financial-wallettrace' });
+      setConfidence(10);
+      return Promise.resolve();
+    }
+    
+    function scanGeospatial(t) {
+      const m = t.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
+      if (m) {
+        const lat = parseFloat(m[1]), lon = parseFloat(m[2]);
+        return fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon, { headers: { 'User-Agent': 'SENTIVAL/2.0' } })
+          .then(r => r.json())
+          .then(d => {
+            if (d && d.display_name) {
+              addResult({ title: 'Reverse Geocode', description: d.display_name, severity: 'info', source: 'geospatial-geotagminer', fields: { Lat: String(lat), Lon: String(lon), Address: d.display_name } });
+              addEntity(d.display_name.split(',')[0], 'LOCATION', 90);
+              setConfidence(85);
+            }
+          });
+      }
+      return API.nominatim(t).then(results => {
+        if (results && results.length) {
+          results.forEach((r, i) => {
+            addResult({ title: 'Location #' + (i + 1), description: r.display_name.substring(0, 80), severity: 'info', source: 'geospatial-mapreconstruction', fields: { Name: r.display_name, Lat: r.lat, Lon: r.lon, Type: r.type } });
+            if (i === 0) addEntity(r.display_name.split(',')[0], 'LOCATION', 85);
+          });
+          setConfidence(75);
+        } else {
+          addResult({ title: 'Not Found', description: t, severity: 'medium', source: 'geospatial-geotagminer' });
+          setConfidence(10);
+        }
+      });
+    }
+    
+    // Init
+    addSignal('SYS', 'SENTI/VAL v2.0 initialized', 'success');
+    addSignal('SYS', '5 morphological states loaded', 'info');
+    addSignal('SYS', 'Neural link established', 'info');
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && document.activeElement.id === 'target-input') executeScan();
+      if (e.key === 'Escape') clearResults();
+    });
+    
+    // Create floating particles
+    const fpContainer = document.getElementById('float-particles');
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('div');
+      p.className = 'float-particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.top = Math.random() * 100 + 'vh';
+      p.style.animationDelay = Math.random() * 10 + 's';
+      p.style.animationDuration = (10 + Math.random() * 10) + 's';
+      fpContainer.appendChild(p);
+    }
+  </script>
+</body>
+</html>
