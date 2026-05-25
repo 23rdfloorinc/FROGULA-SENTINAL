@@ -1,1 +1,767 @@
-file:///C:/Users/frogu/sentival-fixed.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>23rdfloorinc.+FROGULA+LABS+AI PRESENTS: SENTI/VAL</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --neon-cyan: #00e5ff;
+      --neon-pink: #ff3366;
+      --neon-purple: #a855f7;
+      --neon-green: #00ff88;
+      --neon-amber: #ffaa00;
+      --deep-space: #020408;
+      --midnight: #070b14;
+      --void: #030712;
+      --glass-bg: rgba(10, 15, 26, 0.7);
+    }
+    
+    body {
+      background: var(--void);
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      overflow: hidden;
+      height: 100vh;
+      position: relative;
+    }
+    
+    /* Cosmic Background */
+    .cosmic-bg {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 20% 80%, rgba(0, 229, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(255, 51, 102, 0.03) 0%, transparent 70%),
+        linear-gradient(180deg, var(--void) 0%, var(--midnight) 50%, var(--void) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+      background-size: 100px 100px;
+      pointer-events: none;
+      z-index: 1;
+      animation: gridMove 20s linear infinite;
+    }
+    
+    @keyframes gridMove {
+      0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+      100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+    }
+    
+    /* Floating Particles */
+    .particle {
+      position: fixed;
+      width: 4px;
+      height: 4px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.3;
+      animation: float 15s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+      33% { transform: translateY(-30px) translateX(20px); opacity: 0.6; }
+      66% { transform: translateY(20px) translateX(-20px); opacity: 0.2; }
+    }
+    
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--deep-space); }
+    ::-webkit-scrollbar-thumb { background: #1a2744; border-radius: 2px; }
+    
+    .neuro-panel {
+      background: linear-gradient(135deg, rgba(10,15,26,0.9), rgba(7,11,20,0.85));
+      border: 1px solid rgba(0, 229, 255, 0.15);
+      border-radius: 12px;
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 
+        0 0 40px rgba(0, 229, 255, 0.05),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .neuro-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+      opacity: 0.5;
+    }
+    
+    .neuro-panel::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent 40%, rgba(0, 229, 255, 0.02) 50%, transparent 60%);
+      pointer-events: none;
+    }
+    
+    #orb-container {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    #orb-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    
+    .orb-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+    
+    .orb-stats {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      padding: 8px 20px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+      pointer-events: none;
+    }
+    
+    .orb-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    
+    @media (max-width: 768px) {
+      .orb-stats { display: none; }
+    }
+    
+    .domain-btn {
+      transition: all 0.3s;
+    }
+    
+    .domain-btn.active {
+      background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 229, 255, 0.05)) !important;
+      border: 1px solid var(--neon-cyan) !important;
+      color: var(--neon-cyan) !important;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.3) !important;
+    }
+    
+    .domain-btn:hover:not(.active) {
+      border: 1px solid var(--neon-cyan) !important;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.2) !important;
+    }
+    
+    #data-table tr:hover {
+      background: linear-gradient(90deg, rgba(0, 229, 255, 0.08), transparent) !important;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff; }
+      50% { box-shadow: 0 0 20px #00e5ff, 0 0 40px #00e5ff; }
+    }
+    
+    @keyframes glow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    @keyframes loading {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(200%); }
+    }
+    
+    @keyframes shimmer {
+      0% { opacity: 0.7; }
+      50% { opacity: 1; }
+      100% { opacity: 0.7; }
+    }
+    
+    @keyframes scan {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+  </style>
+</head>
+<body>
+  <div class="cosmic-bg"></div>
+  <div class="grid-overlay"></div>
+  
+  <!-- Floating Particles -->
+  <div id="particles-container"></div>
+  
+  <!-- Header -->
+  <div style="display:flex;align-items:center;gap:40px;padding:12px 20px;border-bottom:1px solid rgba(0,229,255,0.15);background:linear-gradient(180deg,rgba(7,11,20,0.95),rgba(10,15,26,0.8));backdrop-filter:blur(20px);position:relative;z-index:100;height:56px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="width:10px;height:10px;border-radius:50%;background:#00e5ff;box-shadow:0 0 10px #00e5ff, 0 0 20px #00e5ff, 0 0 30px #00e5ff;animation:pulse 2s ease-in-out infinite"></div>
+      <span style="font-family:'Orbitron',sans-serif;font-weight:800;font-size:13px;letter-spacing:3px;background:linear-gradient(90deg,#00e5ff,#855f7,#00e5ff);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;color:#00e5ff;animation:glow 3s ease-in-out infinite">SENTI/VAL</span>
+      <span style="color:#4a5568;font-size:10px;font-family:'Orbitron',sans-serif">v2.0</span>
+      <span style="padding:2px 10px;border-radius:20px;background:rgba(0,255,136,0.1);color:#00ff88;border:1px solid rgba(0,255,136,0.3);font-size:9px;font-family:'Orbitron',sans-serif">🧬 LIVE</span>
+    </div>
+    <div style="flex:1;text-align:center;"><span style="color:#4a5568;font-size:10px;letter-spacing:3px;text-transform:uppercase">23rdfloorinc.+FROGULA+LABS+AI PRESENTS</span></div>
+    <div style="display:flex;align-items:center;gap:20px;font-size:11px;color:#4a5568;font-family:'Orbitron',sans-serif;">
+      <span id="clock">----</span>
+      <span>BACKEND: <span style="padding:2px 8px;border-radius:20px;background:rgba(0,229,255,0.15);color:#00e5ff;border:1px solid rgba(0,229,255,0.4);font-size:9px">NEURAL LINK</span></span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div style="display:flex;height:calc(100vh - 56px);position:relative;z-index:10;">
+    
+    <!-- Left Panel -->
+    <div style="width:300px;min-width:300px;border-right:1px solid rgba(0,229,255,0.1);background:rgba(10,15,26,0.5);display:flex;flex-direction:column;backdrop-filter:blur(10px);">
+      
+      <!-- Target Section -->
+      <div style="padding:16px;border-bottom:1px solid rgba(0,229,255,0.1);">
+        <label style="font-size:9px;color:#4a5568;text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:8px;font-family:'Orbitron',sans-serif">///TARGET///</label>
+        <input id="target-input" type="text" placeholder="domain, IP, @user, wallet..." style="background:rgba(0,0,0,0.4);border:1px solid rgba(26,39,68,0.8);color:#e2e8f0;font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 14px;border-radius:8px;outline:none;transition:all 0.3s;width:100%;margin-bottom:8px;" onfocus="this.style.borderColor='#00e5ff'" onblur="this.style.borderColor='rgba(26,39,68,0.8)'">
+        <button onclick="executeScan()" style="width:100%;border-radius:8px;padding:14px;background:linear-gradient(90deg,#0891b2,#06b6d4,#00e5ff,#06b6d4,#0891b2);background-size:200% 100%;border:none;color:#000;font-weight:800;font-size:11px;border:none;cursor:pointer;letter-spacing:2px;font-family:'Orbitron',sans-serif;text-transform:uppercase;margin-top:8px;transition:all 0.3s;position:relative;overflow:hidden;text-shadow:0 0 10px rgba(0,0,0,0.2);">INITIATE SCAN</button>
+        <div id="loading-indicator" style="display:none;margin-top:12px;overflow:hidden;border-radius:4px;"><div style="height:2px;background:linear-gradient(90deg,transparent,#00e5ff,#00ff88,#a855f7,#00e5ff,transparent);background-size:200% 100%;animation:loading 1.5s ease-in-out infinite,shimmer 2s ease-in-out infinite;width:100%;"></div></div>
+      </div>
+
+      <!-- OSINT Domains -->
+      <div style="padding:16px;border-bottom:1px solid rgba(0,229,255,0.1);flex:1;overflow-y:auto;">
+        <label style="font-size:9px;color:#4a5568;text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:12px;font-family:'Orbitron',sans-serif">///OSINT DOMAINS///</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="domain-grid">
+          <button onclick="selectDomain(this)" class="domain-btn neuro-panel" data-domain="identity" style="padding:12px;text-align:left;cursor:pointer;border-radius:8px;transition:all 0.3s;border:1px solid rgba(26,39,68,0.8);background:linear-gradient(135deg,rgba(7,11,20,0.8),rgba(0,229,255,0.03));color:#4a5568;">
+            <div style="font-size:11px;margin-bottom:2px;text-shadow:0 0 10px rgba(0,229,255,0.5);">ID</div><div style="font-size:9px;color:#4a5568;text-transform:uppercase;">Identity</div>
+          </button>
+          <button onclick="selectDomain(this)" class="domain-btn neuro-panel" data-domain="infrastructure" style="padding:12px;text-align:left;cursor:pointer;border-radius:8px;transition:all 0.3s;">
+            <div style="font-size:11px;margin-bottom:2px;">INFRA</div><div style="font-size:9px;color:#4a5568;text-transform:uppercase;">Infrastructure</div>
+          </button>
+          <button onclick="selectDomain(this)" class="domain-btn neuro-panel" data-domain="threat" style="padding:12px;text-align:left;cursor:pointer;border-radius:8px;transition:all 0.3s;">
+            <div style="font-size:11px;margin-bottom:2px;">THREAT</div><div style="font-size:9px;color:#4a5568;text-transform:uppercase;">Intelligence</div>
+          </button>
+          <button onclick="selectDomain(this)" class="domain-btn neuro-panel" data-domain="crypto" style="padding:12px;text-align:left;cursor:pointer;border-radius:8px;transition:all 0.3s;">
+            <div style="font-size:11px;margin-bottom:2px;">CRYPTO</div><div style="font-size:9px;color:#4a5568;text-transform:uppercase;">Blockchain</div>
+          </button>
+          <button onclick="selectDomain(this)" class="domain-btn neuro-panel" data-domain="surface" style="padding:12px;text-align:left;cursor:pointer;border-radius:8px;transition:all 0.3s;">
+            <div style="font-size:11px;margin-bottom:2px;">SURFACE</div><div style="font-size:9px;color:#4a5568;text-transform:uppercase;">Web Recon</div>
+          </button>
+          <button onclick="selectDomain(this)" class="domain-btn neuro-panel" data-domain="social" style="padding:12px;text-align:left;cursor:pointer;border-radius:8px;transition:all 0.3s;">
+            <div style="font-size:11px;margin-bottom:2px;">SOCIAL</div><div style="font-size:9px;color:#4a5568;text-transform:uppercase;">Networks</div>
+          </button>
+          <button onclick="selectDomain(this)" class="domain-btn neuro-panel" data-domain="breach" style="padding:12px;text-align:left;cursor:pointer;border-radius:8px;transition:all 0.3s;">
+            <div style="font-size:11px;margin-bottom:2px;">LEAK</div><div style="font-size:9px;color:#4a5568;text-transform:uppercase;">Breach Data</div>
+          </button>
+          <button onclick="selectDomain(this)" class="domain-btn neuro-panel" data-domain="geospatial" style="padding:12px;text-align:left;cursor:pointer;border-radius:8px;transition:all 0.3s;">
+            <div style="font-size:11px;margin-bottom:2px;">GEO</div><div style="font-size:9px;color:#4a5568;text-transform:uppercase;">Geospatial</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- System Status -->
+      <div style="padding:16px;border-top:1px solid rgba(0,229,255,0.1);font-size:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="color:#4a5568">SYSTEM STATUS</span>
+          <span style="color:#00ff88;padding:2px 6px;border-radius:4px;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);">OPERATIONAL</span>
+        </div>
+        <div id="node-counter" style="background:rgba(0,0,0,0.4);border-radius:6px;padding:8px;margin-top:4px;">
+          <div style="font-size:9px;color:#4a5568;margin-bottom:4px;">ACTIVE NODES</div>
+          <div id="node-count" style="font-size:20px;font-weight:800;color:#00e5ff;text-shadow:0 0 10px rgba(0,229,255,0.5);">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Orb Area -->
+    <div id="orb-container" class="neuro-panel" style="flex:1;position:relative;">
+      
+      <canvas id="orb-canvas" style="position:absolute;inset:0;z-index:1;"></canvas>
+      
+      <div class="orb-overlay" style="display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;">
+        <div id="orb-shape-name" style="font-family:'Orbitron',sans-serif;font-size:24px;font-weight:800;color:#00e5ff;text-shadow:0 0 20px rgba(0,229,255,0.8);letter-spacing:8px;text-transform:uppercase;opacity:0;transition:opacity 0.5s;">ASTROLABE</div>
+        <div id="orb-particles" style="font-size:11px;color:#4a5568;margin-top:8px;opacity:0;transition:opacity 0.5s;"></div>
+      </div>
+      
+      <div class="orb-stats" style="padding:12px 24px;border-radius:8px;background:rgba(0,0,0,0.7);backdrop-filter:blur(15px);border:1px solid rgba(0,229,255,0.2);">
+        <div class="orb-stat" style="text-align:center;">
+          <div style="font-size:14px;font-weight:600;color:#00e5ff;text-shadow:0 0 10px rgba(0,229,255,0.5);">FREQUENCY</div>
+          <div id="freq-value" style="font-size:16px;color:#fff;">1.0</div>
+        </div>
+        <div class="orb-stat" style="text-align:center;">
+          <div style="font-size:14px;font-weight:600;color:#a855f7;text-shadow:0 0 10px rgba(168,85,247,0.5);">NODES</div>
+          <div id="nodes-value" style="font-size:16px;color:#fff;">0</div>
+        </div>
+        <div class="orb-stat" style="text-align:center;">
+          <div style="font-size:14px;font-weight:600;color:#00ff88;text-shadow:0 0 10px rgba(0,255,136,0.5);">DEPTH</div>
+          <div id="depth-value" style="font-size:16px;color:#fff;">87%</div>
+        </div>
+      </div>
+
+      <!-- Scan Line -->
+      <div id="scan-line" style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#00e5ff,#00ff88,transparent);opacity:0;animation:scan 2s linear infinite;display:none;z-index:3;"></div>
+    </div>
+
+    <!-- Right Panel - Data Visualization -->
+    <div style="width:380px;border-left:1px solid rgba(0,229,255,0.1);background:rgba(10,15,26,0.5);display:flex;flex-direction:column;backdrop-filter:blur(10px);">
+      
+      <!-- Results Header -->
+      <div style="padding:16px;border-bottom:1px solid rgba(0,229,255,0.1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <label style="font-size:9px;color:#4a5568;text-transform:uppercase;letter-spacing:2px;font-family:'Orbitron',sans-serif">///INTEL FEED///</label>
+        <select id="data-filter" style="background:rgba(0,0,0,0.4);border:1px solid rgba(26,39,68,0.8);color:#00e5ff;border-radius:6px;padding:6px 10px;font-size:10px;outline:none;cursor:pointer;font-family:'JetBrains Mono',monospace;" onchange="filterData()"><option value="all">View: ALL</option><option value="critical">CRITICAL</option><option value="high">HIGH</option><option value="medium">MEDIUM</option><option value="low">LOW</option></select>
+      </div>
+
+      <!-- Data Table -->
+      <div style="flex:1;overflow:auto;padding:0;">
+        <table id="data-table" style="width:100%;border-collapse:collapse;font-size:10px;">
+          <thead style="position:sticky;top:0;background:rgba(7,11,20,0.95);z-index:10;">
+            <tr style="border-bottom:1px solid rgba(0,229,255,0.15);">
+              <th style="padding:10px 12px;text-transform:uppercase;letter-spacing:1px;color:#4a5568;font-weight:500;text-align:left;font-family:'Orbitron',sans-serif;">Time</th>
+              <th style="padding:10px 12px;text-transform:uppercase;letter-spacing:1px;color:#4a5568;font-weight:500;text-align:left;font-family:'Orbitron',sans-serif;">Target</th>
+              <th style="padding:10px 12px;text-transform:uppercase;letter-spacing:1px;color:#4a5568;font-weight:500;text-align:left;font-family:'Orbitron',sans-serif;">Type</th>
+              <th style="padding:10px 12px;text-transform:uppercase;letter-spacing:1px;color:#4a5568;font-weight:500;text-align:left;font-family:'Orbitron',sans-serif;">Risk</th>
+            </tr>
+          </thead>
+          <tbody id="data-body" style="font-family:'JetBrains Mono',monospace;"></tbody>
+        </table>
+        <div id="empty-state" style="padding:40px;text-align:center;color:#4a5568;font-size:12px;font-style:italic;">Awaiting scan data...</div>
+      </div>
+
+      <!-- Summary Stats -->
+      <div style="padding:16px;border-top:1px solid rgba(0,229,255,0.1);background:linear-gradient(180deg,transparent,rgba(0,229,255,0.02));">
+        <div style="display:flex;justify-content:space-between;font-size:9px;text-transform:uppercase;letter-spacing:1px;font-family:'Orbitron',sans-serif;">
+          <span style="color:#4a5568;">Total Scans</span>
+          <span id="total-scans" style="color:#00e5ff;font-weight:600;">0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-top:8px;font-family:'Orbitron',sans-serif;">
+          <span style="color:#4a5568;">Threat Level</span>
+          <span id="threat-level" style="color:#00ff88;font-weight:600;">LOW</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-top:8px;font-family:'Orbitron',sans-serif;">
+          <span style="color:#4a5568;">Active Modules</span>
+          <span style="color:#a855f7;font-weight:600;">8/8</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Utilities ---
+    const $ = id => document.getElementById(id);
+    let currentDomain = 'identity';
+    let scanCount = 0;
+    let nodeCount = 0;
+
+    // Clock
+    setInterval(() => $('clock').textContent = new Date().toLocaleString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) + ' UTC', 1000);
+
+    // Floating particles
+    function createParticles() {
+      const container = $('particles-container');
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + 'vw';
+        particle.style.top = Math.random() * 100 + 'vh';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+        particle.style.opacity = 0.1 + Math.random() * 0.4;
+        container.appendChild(particle);
+      }
+    }
+    createParticles();
+
+    // --- Domain Selection ---
+    function selectDomain(btn) {
+      document.querySelectorAll('.domain-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentDomain = btn.dataset.domain;
+    }
+    document.querySelector('[data-domain="identity"]').classList.add('active');
+
+    // --- Data Generation ---
+    function generateMockData(domain, target) {
+      const now = new Date();
+      const timeStr = now.toLocaleString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      
+      const templates = {
+        identity: () => [
+          { target: target || 'user_0x4f2a', type: 'Username Lookup', risk: 'MED', time: timeStr },
+          { target: 'john.smith@corp.com', type: 'Email Pattern', risk: 'LOW', time: timeStr },
+          { target: '+1 (555) 019-2847', type: 'Phone Trace', risk: 'HIGH', time: timeStr },
+          { target: target || 'identity_hash', type: 'Hash Analysis', risk: 'CRITICAL', time: timeStr }
+        ],
+        infrastructure: () => [
+          { target: target.includes('.') ? target : '192.168.1.104', type: 'IP Resolution', risk: 'MED', time: timeStr },
+          { target: 'AS16509', type: 'ASN Mapping', risk: 'LOW', time: timeStr },
+          { target: 'nginx/1.18.0', type: 'Service Banner', risk: 'MED', time: timeStr },
+          { target: 'Cloudflare', type: 'CDN Detection', risk: 'LOW', time: timeStr }
+        ],
+        threat: () => [
+          { target: 'CVE-2024-1234', type: 'Vulnerability', risk: 'CRITICAL', time: timeStr },
+          { target: 'APT29', type: 'Actor Mapping', risk: 'HIGH', time: timeStr },
+          { target: target || 'hash_0x9f3', type: 'Malware Hash', risk: 'MED', time: timeStr },
+          { target: '2024-01-15', type: 'Campaign Date', risk: 'MED', time: timeStr }
+        ],
+        crypto: () => [
+          { target: target.startsWith('bc1') ? target : 'bc1q' + 'xyz789...pqr234', type: 'BTC Wallet', risk: target.startsWith('bc1') ? 'HIGH' : 'MED', time: timeStr },
+          { target: '0x742d...9f2a', type: 'ETH Address', risk: 'MED', time: timeStr },
+          { target: 'Binance', type: 'Exchange Tag', risk: 'LOW', time: timeStr },
+          { target: '2.847 BTC', type: 'Balance Found', risk: 'HIGH', time: timeStr }
+        ],
+        surface: () => [
+          { target: 'login.corp.com', type: 'Admin Portal', risk: 'CRITICAL', time: timeStr },
+          { target: '/api/v2/endpoints', type: 'API Discovery', risk: 'HIGH', time: timeStr },
+          { target: 'robots.txt', type: 'Hidden Paths', risk: 'MED', time: timeStr },
+          { target: 'Drupal 9.3.2', type: 'CMS Version', risk: 'MED', time: timeStr }
+        ],
+        social: () => [
+          { target: '@' + (target.replace('@', '') || 'redirect7'), type: 'Twitter/X Handle', risk: 'MED', time: timeStr },
+          { target: 'linkedin.com/in/john', type: 'LinkedIn', risk: 'LOW', time: timeStr },
+          { target: 'GitHub: 47 repos', type: 'Code Presence', risk: 'LOW', time: timeStr },
+          { target: 'Discord: 12 servers', type: 'Community Links', risk: 'MED', time: timeStr }
+        ],
+        breach: () => [
+          { target: 'HaveIBeenPwned', type: 'Leak Check', risk: target.includes('@') ? 'CRITICAL' : 'MED', time: timeStr },
+          { target: 'Collection #1-5', type: 'Password Breach', risk: 'HIGH', time: timeStr },
+          { target: '2019-2024', type: 'Exposure Window', risk: 'MED', time: timeStr },
+          { target: '2.3B records', type: 'Data Volume', risk: 'HIGH', time: timeStr }
+        ],
+        geospatial: () => [
+          { target: '37.7749, -122.4194', type: 'Coordinates', risk: 'LOW', time: timeStr },
+          { target: 'San Francisco, CA', type: 'Geolocation', risk: 'LOW', time: timeStr },
+          { target: 'ISP: Comcast', type: 'ISP Mapping', risk: 'LOW', time: timeStr },
+          { target: '±50m accuracy', type: 'Precision', risk: 'MED', time: timeStr }
+        ]
+      };
+      return (templates[domain] || templates.identity)();
+    }
+
+    // --- Execute Scan with Orb Reaction ---
+    async function executeScan() {
+      const target = $('target-input').value.trim();
+      if (!target) { $('target-input').focus(); return; }
+      
+      $('loading-indicator').style.display = 'block';
+      $('scan-line').style.display = 'block';
+      $('scan-line').style.opacity = '1';
+      
+      // Trigger orb animation
+      triggerOrbScan();
+      
+      await new Promise(r => setTimeout(r, 1500 + Math.random() * 2000));
+      
+      const data = generateMockData(currentDomain, target);
+      scanCount++;
+      nodeCount += data.length;
+      $('node-count').textContent = nodeCount;
+      $('nodes-value').textContent = nodeCount;
+      $('depth-value').textContent = Math.floor(50 + Math.random() * 50) + '%';
+      $('total-scans').textContent = scanCount;
+      $('threat-level').textContent = data.some(d => d.risk === 'CRITICAL') ? 'CRITICAL' : data.some(d => d.risk === 'HIGH') ? 'HIGH' : 'MED';
+      $('threat-level').style.color = data.some(d => d.risk === 'CRITICAL') ? '#ff3366' : data.some(d => d.risk === 'HIGH') ? '#ffaa00' : '#00e5ff';
+      
+      $('empty-state').style.display = 'none';
+      const tbody = $('data-body');
+      
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.style.cssText = 'border-bottom:1px solid rgba(0,229,255,0.04);transition:background 0.2s;cursor:default;';
+        const riskColor = { CRITICAL: '#ff3366', HIGH: '#ffaa00', MED: '#00e5ff', LOW: '#00ff88' }[row.risk] || '#4a5568';
+        tr.innerHTML = `<td style="padding:10px 12px;color:#4a5568;font-size:9px;">${row.time}</td><td style="padding:10px 12px;color:#e2e8f0;">${row.target}</td><td style="padding:10px 12px;color:#6b7b96;">${row.type}</td><td style="padding:10px 12px;"><span style="padding:2px 6px;border-radius:4px;background:${riskColor}20;color:${riskColor};font-size:9px;font-weight:600;">${row.risk}</span></td>`;
+        tbody.insertBefore(tr, tbody.firstChild);
+        filterData();
+      });
+      
+      $('loading-indicator').style.display = 'none';
+      $('scan-line').style.opacity = '0';
+      setTimeout(() => $('scan-line').style.display = 'none', 300);
+    }
+
+    // --- Filter Data ---
+    function filterData() {
+      const filter = $('data-filter').value;
+      Array.from($('data-body').children).forEach(row => {
+        const risk = row.querySelector('span')?.textContent || 'LOW';
+        row.style.display = (filter === 'all' || risk === filter) ? '' : 'none';
+      });
+    }
+
+    // =============================
+    // WEBGL ORB WITH MORPHING CANVAS
+    // =============================
+    
+    let scene, camera, renderer, points, uniforms;
+    let currentShape = 0;
+    let shapeNames = ['ASTROLABE', 'DNA HELIX', 'CORE PULSE', 'NEURAL NET', 'DATA STREAM'];
+    let orbStats = { nodes: 0, pulse: 1.0 };
+    
+    // Orb shapes - GLSL vertex modifications
+    const orbShapes = {
+      astrolabe: `
+        float a = position.x * 0.5 + uTime * 0.3;
+        float r = 1.0 + sin(a * 3.0) * 0.3 + cos(position.y * 5.0) * 0.2;
+        float x = r * cos(a) * (1.0 + position.z * 0.1);
+        float y = r * sin(a) * (1.0 + position.z * 0.1);
+        float z = position.y * 0.5 + sin(uTime + a) * 0.2;
+        vec3 newPos = vec3(x, y, z);
+        vColor = mix(uColorA, uColorB, sin(a + uTime) * 0.5 + 0.5);
+      `,
+      dna: `
+        float t = position.x * 2.0 + uTime * 0.5;
+        float phase = position.y * 3.14159;
+        float r = 0.8 + position.z * 0.3;
+        float x = r * cos(t + phase);
+        float y = position.x * 1.5;
+        float z = r * sin(t + phase);
+        vec3 newPos = vec3(x, y, z);
+        vColor = mix(uColorA, uColorB, sin(phase + uTime) * 0.5 + 0.5);
+      `,
+      heart: `
+        float a = position.x * 6.28318;
+        float r = 0.5 + 0.4 * (1.0 + sin(a)) * (1.0 + 0.9 * cos(a)) / (1.0 + cos(a));
+        r += sin(uTime * 2.0) * 0.1;
+        float x = r * cos(a) * 1.2;
+        float y = r * sin(a) * 1.2;
+        float z = position.y * 0.3 + sin(uTime * 3.0 + a) * 0.15;
+        vec3 newPos = vec3(x, y, z);
+        vColor = mix(vec3(1.0, 0.2, 0.4), vec3(1.0, 0.6, 0.8), sin(uTime + a) * 0.5 + 0.5);
+      `,
+      network: `
+        vec3 grid = floor(position * 3.0) / 3.0;
+        vec3 newPos = grid * 2.0 + sin(grid * 5.0 + uTime) * 0.2;
+        newPos += (position - grid) * 0.3;
+        float con = sin(grid.x * 10.0 + uTime) * sin(grid.y * 10.0 + uTime) * sin(grid.z * 10.0 + uTime);
+        vColor = mix(uColorA, uColorB, con * 0.5 + 0.5);
+      `,
+      stream: `
+        float t = uTime * 0.8;
+        float x = position.x * 2.0;
+        float y = mod(position.y + t, 2.0) - 1.0;
+        float z = sin(position.x * 10.0 + t * 2.0) * 0.3 + cos(y * 5.0) * 0.2;
+        z += position.z * 0.5;
+        vec3 newPos = vec3(x, y, z);
+        float stream = sin(position.x * 20.0 - t * 3.0);
+        vColor = mix(vec3(0.0, 1.0, 0.3), vec3(0.0, 0.5, 1.0), stream * 0.5 + 0.5);
+      `
+    };
+    
+    const shapeKeys = Object.keys(orbShapes);
+    
+    function initOrb() {
+      const container = $('orb-container');
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+      camera.position.z = 3;
+      
+      renderer = new THREE.WebGLRenderer({ 
+        canvas: $('orb-canvas'),
+        antialias: true,
+        alpha: true 
+      });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      
+      // Create particle system
+      const particleCount = 50000;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      const randoms = new Float32Array(particleCount);
+      
+      for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+        positions[i3] = (Math.random() - 0.5) * 2;
+        positions[i3 + 1] = (Math.random() - 0.5) * 2;
+        positions[i3 + 2] = (Math.random() - 0.5) * 2;
+        randoms[i] = Math.random();
+      }
+      
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
+      
+      uniforms = {
+        uTime: { value: 0 },
+        uPulse: { value: 0 },
+        uMouse: { value: new THREE.Vector3(0, 0, 0) },
+        uColorA: { value: new THREE.Color('#00e5ff') },
+        uColorB: { value: new THREE.Color('#a855f7') },
+        uShape: { value: 0 }
+      };
+      
+      const material = new THREE.ShaderMaterial({
+        uniforms: uniforms,
+        vertexShader: `
+          uniform float uTime;
+          uniform float uPulse;
+          uniform float uShape;
+          uniform vec3 uColorA;
+          uniform vec3 uColorB;
+          uniform vec3 uMouse;
+          attribute float aRandom;
+          varying vec3 vColor;
+          varying float vAlpha;
+          
+          void main() {
+            vec3 position = position * (1.0 + uPulse * 0.3);
+            
+            // Shape morphing logic
+            int shapeIdx = int(floor(uShape));
+            vec3 newPos = position;
+            
+            if (shapeIdx == 0) {
+              ${orbShapes.astrolabe}
+            } else if (shapeIdx == 1) {
+              ${orbShapes.dna}
+            } else if (shapeIdx == 2) {
+              ${orbShapes.heart}
+            } else if (shapeIdx == 3) {
+              ${orbShapes.network}
+            } else {
+              ${orbShapes.stream}
+            }
+            
+            vec4 mvPosition = modelViewMatrix * vec4(newPos, 1.0);
+            gl_Position = projectionMatrix * mvPosition;
+            
+            float size = 2.0 + aRandom * 3.0 + uPulse * 5.0;
+            gl_PointSize = size * (30.0 / -mvPosition.z);
+            vAlpha = 0.4 + aRandom * 0.6 + uPulse * 0.4;
+          }
+        `,
+        fragmentShader: `
+          varying vec3 vColor;
+          varying float vAlpha;
+          uniform float uTime;
+          
+          void main() {
+            float dist = length(gl_PointCoord - vec2(0.5));
+            if (dist > 0.5) discard;
+            
+            float glow = 1.0 - dist * 2.0;
+            glow = pow(glow, 1.5);
+            
+            gl_FragColor = vec4(vColor * (1.0 + glow * 0.5), vAlpha * glow);
+          }
+        `,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      
+      points = new THREE.Points(geometry, material);
+      scene.add(points);
+      
+      $('orb-particles').textContent = (particleCount / 1000).toFixed(0) + 'K PARTICLES';
+      $('orb-particles').style.opacity = '1';
+      
+      // Mouse interaction
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        uniforms.uMouse.value.x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+        uniforms.uMouse.value.y = -((e.clientY - rect.top) / rect.height - 0.5) * 2;
+      });
+      
+      // Resize handler
+      window.addEventListener('resize', () => {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      });
+      
+      animate();
+      
+      // Auto morph shapes
+      setInterval(() => {
+        if (uniforms.uPulse.value < 0.1) {
+          currentShape = (currentShape + 1) % shapeKeys.length;
+          uniforms.uShape.value = currentShape;
+          $('orb-shape-name').textContent = shapeNames[currentShape];
+          $('orb-shape-name').style.opacity = '1';
+          setTimeout(() => $('orb-shape-name').style.opacity = '0', 2000);
+        }
+      }, 8000);
+    }
+    
+    function animate() {
+      requestAnimationFrame(animate);
+      
+      if (uniforms) {
+        uniforms.uTime.value += 0.01;
+        
+        // Pulse decay
+        if (uniforms.uPulse.value > 0) {
+          uniforms.uPulse.value *= 0.95;
+        }
+        
+        // Rotate slowly
+        points.rotation.y += 0.002;
+        points.rotation.x += 0.001;
+        
+        $('freq-value').textContent = (1.0 + uniforms.uPulse.value * 2.0).toFixed(1);
+      }
+      
+      renderer.render(scene, camera);
+    }
+    
+    function triggerOrbScan() {
+      if (!uniforms) return;
+      
+      // Random shape on scan
+      currentShape = Math.floor(Math.random() * shapeKeys.length);
+      uniforms.uShape.value = currentShape;
+      
+      // Trigger pulse
+      uniforms.uPulse.value = 1.0;
+      
+      // Update display
+      $('orb-shape-name').textContent = shapeNames[currentShape];
+      $('orb-shape-name').style.opacity = '1';
+      $('scan-line').style.display = 'block';
+      $('scan-line').style.opacity = '1';
+      
+      setTimeout(() => {
+        $('orb-shape-name').style.opacity = '0';
+        $('scan-line').style.opacity = '0';
+      }, 1500);
+    }
+
+    // --- Init ---
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof THREE === 'undefined') {
+        console.error('THREE.js not loaded!');
+        return;
+      }
+      initOrb();
+    });
+  </script>
+  <script type="importmap">{"imports": {"three": "https://unpkg.com/three@0.174.0/build/three.module.js"}}</script>
+  <script type="module">
+    import * as THREE from 'https://unpkg.com/three@0.174.0/build/three.module.js';
+    window.THREE = THREE;
+    document.dispatchEvent(new Event('DOMContentLoaded'));
+  </script>
+</body>
+</html>
